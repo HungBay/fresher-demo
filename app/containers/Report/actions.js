@@ -46,11 +46,13 @@ export function getTotalCulcalatorError(error) {
   };
 }
 
-export function getQueryReportRequest(keyword) {
+export function getQueryReportRequest(keyword, startDate, endDate) {
   return {
     type: GET_QUERY_REPORT_REQUEST,
     payload: {
       keyword,
+      startDate,
+      endDate,
     },
   };
 }

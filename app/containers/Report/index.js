@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { formatVND } from 'utils/helpers';
+import { subtotal, totalOrderOfDay, totalReportOfDay } from 'utils/helpers';
 import { useInjectReducer } from 'utils/injectReducer';
 import { useInjectSaga } from 'utils/injectSaga';
 import DatePickerBox from '../../components/DatePicker';
@@ -12,7 +12,6 @@ import SearchInput from '../../components/SearchIput';
 import TextBox from '../../components/TextBox';
 import {
   getAllReportRequest,
-  getFilterDateRequest,
   getQueryReportRequest,
   getTotalCulcalatorRequest,
 } from './actions';
@@ -30,7 +29,6 @@ const key = 'report';
 const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
   useInjectReducer({ key, reducer });
   useInjectSaga({ key, saga });
-  const [Data, setData] = useState([]);
   useEffect(() => {
     const res = onLoad();
     return () => {
@@ -38,18 +36,22 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
     };
   }, []);
 
+  const [keyword, setKeyWord] = useState('');
   const [filterDate, setFilterDate] = useState({
     startDate: '',
     endDate: '',
   });
 
   const handleChange = value => {
-    onSearch(value);
+    setKeyWord(value);
   };
 
-  const onSelectValue = evt => {
-    console.log(evt.target.value);
-  };
+  useEffect(() => {
+    onSearch(keyword, filterDate.startDate, filterDate.endDate);
+  }, [keyword, filterDate]);
+  // const onSelectValue = evt => {
+  //   console.log(evt.target.value);
+  // };
 
   const totalOrder = useMemo(() => {
     console.log('totalOrder');
@@ -58,13 +60,16 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
 
   const totalMoney = useMemo(() => {
     console.log('totalMoney');
-    let sum = 0;
-    reportTotal.forEach(element => {
-      if (element && element.total) {
-        sum += element.total;
-      }
-    });
-    return sum;
+    return subtotal(reportData);
+  }, [reportTotal]);
+
+  const totalMoneyOfDay = useMemo(() => {
+    console.log('totalMoneyOfDay');
+    return totalReportOfDay(reportData);
+  }, [reportTotal]);
+  const OrderOfDay = useMemo(() => {
+    console.log('OrderOfDay');
+    return totalOrderOfDay(reportData);
   }, [reportTotal]);
 
   const handleChangeFilter = useCallback(
@@ -75,17 +80,8 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
 
       setFilterDate({ ...filterDate, [name]: value });
     },
-    [filterDate],
+    [filterDate.startDate, filterDate.endDate],
   );
-
-  useEffect(() => {
-    const data = reportData.filter(
-      x =>
-        x.orderDate >= filterDate.startDate &&
-        x.orderDate <= filterDate.endDate,
-    );
-    setData(data);
-  }, [filterDate.startDate, filterDate.endDate]);
 
   return (
     <div className="root">
@@ -93,14 +89,14 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <TextBox
             label="Số tiền hàng ngày"
-            total="1000"
+            total={totalMoneyOfDay}
             className="Text1Box"
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <TextBox
             label="Số đơn hàng trong ngày"
-            total="1000"
+            total={OrderOfDay}
             className="Text2Box"
           />
         </Grid>
@@ -114,7 +110,7 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           <TextBox
             label="Số tổng tiền"
-            total={formatVND(totalMoney)}
+            total={totalMoney}
             className="Text4Box"
           />
         </Grid>
@@ -130,7 +126,7 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
             <DatePickerBox onChange={handleChangeFilter} name="endDate" />
           </Grid>
 
-          <select
+          {/* <select
             onChange={onSelectValue}
             style={{
               outline: 'none',
@@ -144,17 +140,11 @@ const Report = ({ onLoad, reportData, onSearch, reportTotal }) => {
               Tăng theo thời gian
             </option>
             <option value="desc">Giảm theo thời gian</option>
-          </select>
+          </select> */}
         </Grid>
         <Grid item lg={12} sm={12} xl={12} xs={12}>
-          {Data.length <= 0 ? (
-            <ReportTable reportData={reportData} />
-          ) : (
-            <ReportTable reportData={Data} />
-          )}
+          <ReportTable reportData={reportData} />
         </Grid>
-
-        {/* <Pagination items={reportData} onChangePage={onChangePage} /> */}
       </Grid>
     </div>
   );
@@ -178,8 +168,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(getAllReportRequest());
     dispatch(getTotalCulcalatorRequest());
   },
-  onSearch: keyword => {
-    dispatch(getQueryReportRequest(keyword));
+  onSearch: (keyword, startDate, endDate) => {
+    dispatch(getQueryReportRequest(keyword, startDate, endDate));
   },
 });
 
