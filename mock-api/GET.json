@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Frozen yoghurt", "money": 10000, "quantity": 13 },
+  { "id": 3, "name": "Ice cream sandwich", "money": 20000, "quantity": 20 },
+  { "id": 4, "name": "Eclair", "money": 30000, "quantity": 10 },
+  { "id": 5, "name": "Cupcake", "money": 40000, "quantity": 25 },
+  { "id": 7, "name": "Gingerbread", "money": 15000, "quantity": 23 }
+]

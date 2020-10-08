@@ -1,0 +1,37 @@
+.ViewReport {
+  padding: 8px;
+}
+.Products,
+.Customer {
+  padding: 8px;
+}
+.Customer {
+  position: relative;
+}
+.Customer > img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  z-index: 9999;
+  object-fit: cover;
+}
+.Customer__Information {
+  display: flex;
+  flex-flow: column;
+}
+.Products__Information_Row {
+  cursor: pointer;
+}
+.col {
+  font-size: 13px!important;
+  font-weight: 400!important;
+  color: black!important;
+}
+.products__image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}

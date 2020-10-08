@@ -1,0 +1,33 @@
+.root {
+  padding: 16px;
+}
+.fs_13 {
+  font-size: 13px!important;
+
+}
+.View__Button:focus {
+  outline: none;
+}
+.Main__Toolbar {
+  display: flex;
+  /* justify-content: space-between; */
+}
+.Filter__Search {
+  /* width: 100%!important; */
+  margin-right: 8px;
+}
+.Filter__Date {
+  padding: 0px 8px;
+}
+.Text1Box {
+  background-color: #2196f3!important;
+}
+.Text2Box {
+  background-color: #43a047!important;
+}
+.Text3Box {
+  background-color: #f73378!important;
+}
+.Text4Box {
+  background-color: #1c54b2!important;
+}
